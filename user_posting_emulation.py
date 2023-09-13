@@ -30,19 +30,23 @@ class AWSDBConnector:
 
 new_connector = AWSDBConnector()
 
-def send_data_to_kafka(topic, data):
+def send_data_to_kafka(topic, payload):
     try:
         kafka_topic = f"12a3410ba3cf.{topic}"  
+        headers = {'Content-Type': 'application/vnd.kafka.json.v2+json'}
+        
         response = requests.post(
             f"{invoke_url}/topics/{kafka_topic}",
-            headers={"Content-Type": "application/vnd.kafka.json.v2+json"},
-            json=data
+            headers=headers,
+            data=json.dumps(payload)  # Send the payload as the request body
         )
         response.raise_for_status()
-        print(response.json())
+        
+        # Capture and print the response
         print(f"Data sent to Kafka topic {kafka_topic}")
+        print("Response status code:", response.status_code)
+        print("Response content:", response.content)
     except Exception as e:
-        print(response.json())
         print(f"Failed to send data to Kafka topic {kafka_topic}: {str(e)}")
 
         
@@ -59,10 +63,18 @@ def run_infinite_post_data_loop():
             
             for row in pin_selected_row:
                 pin_result = dict(row._mapping)
-                del pin_result["index"]
+                pin_payload = json.dumps({
+    "records": [
+        {
+        #Data should be send as pairs of column_name:value, with different columns separated by commas       
+        "value": {"index": pin_result["index"], "unique_id": pin_result["unique_id"], "title": pin_result["title"], "description": pin_result["description"], "poster_name": pin_result["poster_name"], "follower_count": pin_result["follower_count"], "tag_list": pin_result["tag_list"], "is_image_or_video": pin_result["is_image_or_video"], "image_src": pin_result["image_src"], "downloaded": pin_result["downloaded"], "save_location": pin_result["save_location"], "category": pin_result["category"]}
+        }
+    ]
+})
             
             
-            send_data_to_kafka("pin", pin_result)
+            
+            send_data_to_kafka("pin", pin_payload)
 
             geo_string = text(f"SELECT * FROM geolocation_data LIMIT {random_row}, 1")
             geo_selected_row = connection.execute(geo_string)
@@ -70,10 +82,18 @@ def run_infinite_post_data_loop():
             for row in geo_selected_row:
                 geo_result = dict(row._mapping)
                 geo_result['timestamp'] = geo_result['timestamp'].isoformat()
-                del geo_result["ind"]
+                geo_payload = json.dumps({
+    "records": [
+        {
+        #Data should be send as pairs of column_name:value, with different columns separated by commas       
+        "value": {"index": geo_result["ind"], "timestamp": geo_result["timestamp"], "latitude": geo_result["latitude"], "longitude": geo_result["longitude"], "country": geo_result["country"]}
+        }
+    ]
+})
+                
 
             
-            send_data_to_kafka("geo", geo_result)
+            send_data_to_kafka("geo", geo_payload)
 
             user_string = text(f"SELECT * FROM user_data LIMIT {random_row}, 1")
             user_selected_row = connection.execute(user_string)
@@ -81,9 +101,17 @@ def run_infinite_post_data_loop():
             for row in user_selected_row:
                 user_result = dict(row._mapping)
                 user_result['date_joined'] = user_result['date_joined'].isoformat()
-                del user_result["ind"]
+                user_payload = json.dumps({
+    "records": [
+        {
+        #Data should be send as pairs of column_name:value, with different columns separated by commas       
+        "value": {"index": user_result["ind"], "first_name": user_result["first_name"], "last_name": user_result["last_name"], "age": user_result["age"], "date_joined": user_result["date_joined"]}
+        }
+    ]
+})
+                
             
-            send_data_to_kafka("user", user_result)
+            send_data_to_kafka("user", user_payload)
             
             print(pin_result)
             print(geo_result)
