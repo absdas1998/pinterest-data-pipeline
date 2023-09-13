@@ -8,6 +8,7 @@ import sqlalchemy
 from sqlalchemy import text
 
 invoke_url = "https://9024l19ao4.execute-api.us-east-1.amazonaws.com/test"
+print(invoke_url)
 
 random.seed(100)
 
@@ -38,10 +39,13 @@ def send_data_to_kafka(topic, data):
             json=data
         )
         response.raise_for_status()
+        print(response.json())
         print(f"Data sent to Kafka topic {kafka_topic}")
     except Exception as e:
+        print(response.json())
         print(f"Failed to send data to Kafka topic {kafka_topic}: {str(e)}")
 
+        
 def run_infinite_post_data_loop():
     while True:
         sleep(random.randrange(0, 2))
@@ -55,6 +59,8 @@ def run_infinite_post_data_loop():
             
             for row in pin_selected_row:
                 pin_result = dict(row._mapping)
+                del pin_result["index"]
+            
             
             send_data_to_kafka("pin", pin_result)
 
@@ -64,6 +70,7 @@ def run_infinite_post_data_loop():
             for row in geo_selected_row:
                 geo_result = dict(row._mapping)
                 geo_result['timestamp'] = geo_result['timestamp'].isoformat()
+                del geo_result["ind"]
 
             
             send_data_to_kafka("geo", geo_result)
@@ -74,12 +81,13 @@ def run_infinite_post_data_loop():
             for row in user_selected_row:
                 user_result = dict(row._mapping)
                 user_result['date_joined'] = user_result['date_joined'].isoformat()
+                del user_result["ind"]
             
             send_data_to_kafka("user", user_result)
             
-            # print(pin_result)
-            # print(geo_result)
-            # print(user_result)
+            print(pin_result)
+            print(geo_result)
+            print(user_result)
 
 
 if __name__ == "__main__":
