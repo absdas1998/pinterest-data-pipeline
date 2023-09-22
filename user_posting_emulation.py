@@ -8,7 +8,7 @@ import sqlalchemy
 from sqlalchemy import text
 
 invoke_url = "https://9024l19ao4.execute-api.us-east-1.amazonaws.com/test"
-print(invoke_url)
+
 
 random.seed(100)
 
@@ -113,9 +113,7 @@ def run_infinite_post_data_loop():
             
             send_data_to_kafka("user", user_payload)
             
-            print(pin_result)
-            print(geo_result)
-            print(user_result)
+            
 
 
 if __name__ == "__main__":
