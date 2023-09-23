@@ -7,7 +7,9 @@ import json
 import sqlalchemy
 from sqlalchemy import text
 
-invoke_url = "https://9024l19ao4.execute-api.us-east-1.amazonaws.com/stream_deploy"
+pin_invoke_url = "https://9024l19ao4.execute-api.us-east-1.amazonaws.com/stream_deploy/streams/streaming-12a3410ba3cf-pin/record"
+geo_invoke_url = "https://9024l19ao4.execute-api.us-east-1.amazonaws.com/stream_deploy/streams/streaming-12a3410ba3cf-geo/record"
+user_invoke_url = "https://9024l19ao4.execute-api.us-east-1.amazonaws.com/stream_deploy/streams/streaming-12a3410ba3cf-user/record"
 
 random.seed(100)
 
@@ -28,17 +30,10 @@ class AWSDBConnector:
 
 new_connector = AWSDBConnector()
 
-def send_data_to_api(stream_name, payload):
+def send_data_to_api(stream_name, payload, invoke_url):
     try:
-        payload = {
-            "StreamName": stream_name,
-            "Data": payload,
-            "PartitionKey": str(random.randint(1, 10000))  # You can choose your partition key logic
-        }
-
         headers = {'Content-Type': 'application/json'}
-
-        response = requests.request("PUT", f"{invoke_url}/{stream_name}/record", headers=headers, data=payload)
+        response = requests.request("PUT", invoke_url, headers=headers, data=payload)
         response.raise_for_status()
 
         print(f"Data sent to API for stream {stream_name}")
@@ -62,16 +57,27 @@ def run_infinite_post_data_loop():
             for row in pin_selected_row:
                 pin_result = dict(row._mapping)
                 pin_payload = json.dumps({
-                    "records": [
-                        {      
-                        "value": {"index": pin_result["index"], "unique_id": pin_result["unique_id"], "title": pin_result["title"], "description": pin_result["description"], "poster_name": pin_result["poster_name"], "follower_count": pin_result["follower_count"], "tag_list": pin_result["tag_list"], "is_image_or_video": pin_result["is_image_or_video"], "image_src": pin_result["image_src"], "downloaded": pin_result["downloaded"], "save_location": pin_result["save_location"], "category": pin_result["category"]}
-                        }
-                    ]
-                })
+    "StreamName": "streaming-12a3410ba3cf-pin",  # Replace with your actual Kinesis stream name
+    "Data": {
+        "index": pin_result["index"],
+        "unique_id": pin_result["unique_id"],
+        "title": pin_result["title"],
+        "description": pin_result["description"],
+        "poster_name": pin_result["poster_name"],
+        "follower_count": pin_result["follower_count"],
+        "tag_list": pin_result["tag_list"],
+        "is_image_or_video": pin_result["is_image_or_video"],
+        "image_src": pin_result["image_src"],
+        "downloaded": pin_result["downloaded"],
+        "save_location": pin_result["save_location"],
+        "category": pin_result["category"]
+    },
+    "PartitionKey": "my_pin_data_stream"  # Replace with your chosen partition key
+})
             
             
             
-            send_data_to_api("streaming-12a3410ba3cf-pin", pin_payload)
+            send_data_to_api("streaming-12a3410ba3cf-pin", pin_payload, pin_invoke_url)
 
             geo_string = text(f"SELECT * FROM geolocation_data LIMIT {random_row}, 1")
             geo_selected_row = connection.execute(geo_string)
@@ -80,16 +86,20 @@ def run_infinite_post_data_loop():
                 geo_result = dict(row._mapping)
                 geo_result['timestamp'] = geo_result['timestamp'].isoformat()
                 geo_payload = json.dumps({
-                    "records": [
-                        {     
-                        "value": {"ind": geo_result["ind"], "timestamp": geo_result["timestamp"], "latitude": geo_result["latitude"], "longitude": geo_result["longitude"], "country": geo_result["country"]}
-                        }
-                    ]
-                })
+    "StreamName": "streaming-12a3410ba3cf-geo",  # Replace with your actual Kinesis stream name
+    "Data": {
+        "ind": geo_result["ind"],
+        "timestamp": geo_result["timestamp"],  
+        "latitude": geo_result["latitude"],
+        "longitude": geo_result["longitude"],
+        "country": geo_result["country"]
+    },
+    "PartitionKey": "my_geo_data_steam"  
+})
                 
 
             
-            send_data_to_api("streaming-12a3410ba3cf-geo", geo_payload)
+            send_data_to_api("streaming-12a3410ba3cf-geo", geo_payload, geo_invoke_url)
 
             user_string = text(f"SELECT * FROM user_data LIMIT {random_row}, 1")
             user_selected_row = connection.execute(user_string)
@@ -98,20 +108,21 @@ def run_infinite_post_data_loop():
                 user_result = dict(row._mapping)
                 user_result['date_joined'] = user_result['date_joined'].isoformat()
                 user_payload = json.dumps({
-                    "records": [
-                        {
-                        #Data should be send as pairs of column_name:value, with different columns separated by commas       
-                        "value": {"ind": user_result["ind"], "first_name": user_result["first_name"], "last_name": user_result["last_name"], "age": user_result["age"], "date_joined": user_result["date_joined"]}
-                        }
-                    ]
-                })
+    "StreamName": "streaming-12a3410ba3cf-user",  
+    "Data": {
+        "ind": user_result["ind"],
+        "first_name": user_result["first_name"],
+        "last_name": user_result["last_name"],
+        "age": user_result["age"],
+        "date_joined": user_result["date_joined"]
+    },
+    "PartitionKey": "my_user_data_stream"
+})
                 
             
-            send_data_to_api("streaming-12a3410ba3cf-user", user_payload)
+            send_data_to_api("streaming-12a3410ba3cf-user", user_payload, user_invoke_url)
             
             
-
-
 if __name__ == "__main__":
     print('Working')
     run_infinite_post_data_loop()
