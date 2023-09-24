@@ -50,8 +50,46 @@ Before running any Kafka commands, ensure that your CLASSPATH environment variab
 In the Kafka create topic command, replace the BootstrapServerString with the value you obtained in the previous step. Please note that you have been granted permission to create topics with the exact names specified above on the MSK cluster. Ensure you follow the correct format to avoid permission errors.
 
 ## Batch Processing: connecting MSK cluster to S3 Bucket
+To set up the connection between your MSK cluster and the designated S3 bucket, follow these steps.
+
+Go to the AWS S3 console and find the S3 bucket you want to connect to the MSK cluster. Take note of this bucket name for subsequent steps.
+
+On your EC2 client, download the Confluent.io Amazon S3 Connector. Copy the downloaded connector to the S3 bucket identified in the previous step.
+
+Access the MSK Connect console.
+
+Create a custom plugin with the name <your_chosen_name>-plugin. Ensure you use this specific name when creating the plugin.
+
+Create a connector with the name <your_chosen_name>-connector. Utilize this name for the connector configuration as well.
+
+Configure the connector with the appropriate settings, specifically, set the bucket name to your S3 bucket.
+
+Pay attention to the topics.regex field in the connector configuration. Ensure it follows the structure: <your_chosen_name>.*. This configuration ensures that data from all three previously created Kafka topics will be saved to the designated S3 bucket.
+
+In the "Access permissions" tab, select the IAM role used for authentication to the MSK cluster. This role contains the necessary permissions to connect to both MSK and MSK Connect.
+
+By following these configurations, data flowing through the IAM-authenticated MSK cluster will be automatically stored in the designated S3 bucket.
 
 ## Batch Processing: configuring an API in API Gateway
+This section outlines the steps required to configure your provided API in API Gateway and integrate it with the Kafka REST Proxy, enabling the flow of data from your EC2 client to the MSK Cluster and storage in the S3 bucket. 
+
+Start by creating a resource in API Gateway that allows you to build a PROXY integration for your API.
+
+For the previously created resource, set up an HTTP ANY method. When defining the Endpoint URL, ensure that you copy the correct PublicDNS from the EC2 machine you've been working on in the previous milestones. This EC2 instance should be named after your_chosen_name.
+
+Deploy the API and take note of the Invoke URL, as it will be required for a later task. With the Kafka REST Proxy integration now in place for your API, configure the Kafka REST Proxy on your EC2 client machine.
+
+Start by installing the Confluent package for the Kafka REST Proxy on your EC2 client machine.
+
+Allow the REST proxy to perform IAM authentication to the MSK cluster by modifying the kafka-rest.properties file.
+
+Launch the REST proxy on the EC2 client machine. Now you're prepared to send data to your API, which, in turn, will forward the data to the MSK Cluster using the previously created plugin-connector pair.
+
+Ensure that data from the three tables extracted using the user_posting_emulation.py script is sent to their corresponding Kafka topics.
+
+Verify that data is being sent to the cluster by running a Kafka consumer (one per topic). If everything has been set up correctly, you should observe messages being consumed.
+
+Confirm whether data is being stored in the designated S3 bucket. Take note of the folder organization within the bucket created by your connector.
 
 ## Batch Processing: Databricks
 
