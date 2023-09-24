@@ -112,7 +112,7 @@ Transform the data as shown in my clean_and_analyse_pinterest_data.ipynb file lo
 ## Batch Processing: Databricks workloads on AWS MWAA (Managed Workflows for Apache Airflow)
 Ensure your AWS account has access to MWAA, along with an associated S3 bucket called mwaa-dags-bucket. create an API token in Databricks to establish a connection with your AWS account and set up the MWAA-Databricks connection. To obtain the Databricks connection type we will need to install the corresponding Python dependency in our MWAA environment, by uploading a requirements.txt file in the MWAA-designated S3 bucket.
 
-All that's required is the creation of an Airflow DAG (Directed Acyclic Graph) that will trigger the execution of a Databricks Notebook on a predefined schedule. Upload this DAG to the dags folder in the mwaa-dags-bucket. Your AWS account has the necessary permissions to upload and update a file named <your_UserId_dag.py> to the mwaa-dags-bucket. Ensure that your DAG is named correctly to avoid permission errors.
+All that's required is the creation of an Airflow DAG (Directed Acyclic Graph) that will trigger the execution of a Databricks Notebook on a predefined schedule. Upload this DAG to the dags folder in the mwaa-dags-bucket. Your AWS account has the necessary permissions to upload and update a file named <your_chosen_name_dag.py> to the mwaa-dags-bucket. Ensure that your DAG is named correctly to avoid permission errors.
 
 Lastly, you can manually trigger the DAG you've uploaded in the previous step and verify that it runs successfully. This streamlined setup simplifies the management of your Databricks workloads on AWS MWAA. 
 
