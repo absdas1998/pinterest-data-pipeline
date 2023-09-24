@@ -92,6 +92,19 @@ Verify that data is being sent to the cluster by running a Kafka consumer (one p
 Confirm whether data is being stored in the designated S3 bucket. Take note of the folder organization within the bucket created by your connector.
 
 ## Batch Processing: Databricks
+In order to process the data from the topics I used Databricks in order to do this you will need to create a Databricks account.
+
+Mount a S3 bucket to Databricks:
+In order to do this you will need to create a authentication_credentials.csv that contains a secret access key and access key.
+
+When reading the JSON data from S3 into Databricks, be sure to specify the complete path to the JSON objects, as they appear in your S3 bucket (e.g., topics/<your_chosen_name>.pin/partition=0/).
+
+To organize your data efficiently within Databricks, create three distinct DataFrames:
+
+df_pin for Pinterest post data.
+df_geo for geolocation data.
+df_user for user data.
+This setup will allow you to perform data cleaning and querying effectively within your Databricks environment.
 
 ## Batch Processing: Spark on Databricks
 
