@@ -117,6 +117,16 @@ All that's required is the creation of an Airflow DAG (Directed Acyclic Graph) t
 Lastly, you can manually trigger the DAG you've uploaded in the previous step and verify that it runs successfully. This streamlined setup simplifies the management of your Databricks workloads on AWS MWAA. 
 
 ## Stream Processing: Kinesis stream data and read using Databricks
+In order to analyse streaming data extracted from Pinterest ensure your AWS account has access to AWS Kinesis. Create 3 distinct Kinesis Data streams, one for each table. 
+
+Configure your previously created REST API to enable Kinesis actions invocation. 
+
+The provided access role takes the form of <your_chosen_name-kinesis-access-role>. You can conveniently obtain its ARN from the IAM console under Roles. Ensure that you use this ARN when setting up the Execution role for the integration points of all the methods you'll create in your API. Your API should be capable of invoking actions like listing streams in Kinesis, creating, describing, and deleting streams, and adding records to streams in Kinesis.
+
+The user_posting_emulation_streaming.py script I created builds upon the upon the user_posting_emulation.py script but sends the Pinterest data to the newly modified API. This API then sends the data to shards in AWS Kinesis. 
+
+The read_and_write_stream_data_to_delta_tables.ipynb file showcases how I read the data into Databricks, cleaned the data in the same way I cleaned the batch processing data previously and wrote the data to delta tables in Databricks. 
+
 
 
 
