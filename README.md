@@ -1,10 +1,20 @@
 # Pinterest Data Pipeline Project
 
 ## Table of Contents 
+Project Overview
+Batch Processing: Configuring the EC2 Kafka Client
+Batch Processing: Connecting MSK Cluster to S3 Bucket
+Batch Processing: Configuring an API in API Gateway
+Batch Processing: Databricks
+Batch Processing: Spark on Databricks
+Batch Processing: Databricks Workloads on AWS MWAA
+Stream Processing: Kinesis Stream Data and Read Using Databricks
+
 
 ## Project Overview
+The Pinterest Data Pipeline project is a comprehensive data engineering initiative designed to streamline the collection, processing, and analysis of data from the Pinterest platform. Leveraging various AWS services and data processing tools, this project aims to create an end-to-end data pipeline that seamlessly handles both batch and stream processing of Pinterest data. Key components include Amazon MSK for stream processing, Amazon S3 for data storage, Databricks for data transformation, AWS MWAA for workflow orchestration, and AWS API Gateway for data ingestion. By setting up Kinesis Data Streams and configuring REST APIs, this project ensures real-time data ingestion and processing. The pipeline also includes data cleaning and storage in Delta Tables, enabling efficient querying and analytics. This project simplifies the complex task of managing Pinterest data, making it accessible and actionable for data-driven insights.
 
-## Batch Processing: configuring the EC2 Kafka client
+## Batch Processing: Configuring the EC2 Kafka client
 This section provides a step-by-step guide to configuring the EC2 Kafka client for your data pipeline project.
 
 Before connecting to your EC2 instance, you'll need to create a key pair file locally. Follow these steps:
@@ -49,7 +59,7 @@ Before running any Kafka commands, ensure that your CLASSPATH environment variab
 
 In the Kafka create topic command, replace the BootstrapServerString with the value you obtained in the previous step. Please note that you have been granted permission to create topics with the exact names specified above on the MSK cluster. Ensure you follow the correct format to avoid permission errors.
 
-## Batch Processing: connecting MSK cluster to S3 Bucket
+## Batch Processing: Connecting MSK cluster to S3 Bucket
 To set up the connection between your MSK cluster and the designated S3 bucket, follow these steps.
 
 Go to the AWS S3 console and find the S3 bucket you want to connect to the MSK cluster. Take note of this bucket name for subsequent steps.
@@ -70,7 +80,7 @@ In the "Access permissions" tab, select the IAM role used for authentication to 
 
 By following these configurations, data flowing through the IAM-authenticated MSK cluster will be automatically stored in the designated S3 bucket.
 
-## Batch Processing: configuring an API in API Gateway
+## Batch Processing: Configuring an API in API Gateway
 This section outlines the steps required to configure your provided API in API Gateway and integrate it with the Kafka REST Proxy, enabling the flow of data from your EC2 client to the MSK Cluster and storage in the S3 bucket. 
 
 Start by creating a resource in API Gateway that allows you to build a PROXY integration for your API.
