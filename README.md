@@ -1,14 +1,14 @@
 # Pinterest Data Pipeline Project
 
 ## Table of Contents 
-- Project Overview
-- Batch Processing: Configuring the EC2 Kafka Client
-- Batch Processing: Connecting MSK Cluster to S3 Bucket
-- Batch Processing: Configuring an API in API Gateway
-- Batch Processing: Databricks
-- Batch Processing: Spark on Databricks
-- Batch Processing: Databricks Workloads on AWS MWAA
-- Stream Processing: Kinesis Stream Data and Read Using Databricks
+- [Project Overview](#project-overview)
+- [Batch Processing: Configuring the EC2 Kafka Client](#batch-processing-configuring-the-ec2-kafka-client)
+- [Batch Processing: Connecting MSK Cluster to S3 Bucket](#batch-processing-connecting-msk-cluster-to-s3-bucket)
+- [Batch Processing: Configuring an API in API Gateway](#batch-processing-configuring-an-api-in-api-gateway)
+- [Batch Processing: Databricks](#batch-processing-databricks)
+- [Batch Processing: Spark on Databricks](#batch-processing-spark-on-databricks)
+- [Batch Processing: Databricks Workloads on AWS MWAA](#batch-processing-databricks-workloads-on-aws-mwaa)
+- [Stream Processing: Kinesis Stream Data and Read Using Databricks](#stream-processing-kinesis-stream-data-and-read-using-databricks)
 
 
 ## Project Overview
